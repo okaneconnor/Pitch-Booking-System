@@ -1,0 +1,32 @@
+[
+    {
+      "id": 1,
+      "date": "2025-03-02",
+      "startTime": "17:00",
+      "endTime": "18:30",
+      "pitch": "Pitch 1",
+      "sessionType": "Training",
+      "notes": "Under-12s training session",
+      "coachId": 1
+    },
+    {
+      "id": 2,
+      "date": "2025-03-03",
+      "startTime": "18:00",
+      "endTime": "19:30",
+      "pitch": "Pitch 2",
+      "sessionType": "Training",
+      "notes": "Senior team fitness session",
+      "coachId": 1
+    },
+    {
+      "id": 3,
+      "date": "2025-03-04",
+      "startTime": "16:00",
+      "endTime": "17:30",
+      "pitch": "Pitch 1",
+      "sessionType": "Match",
+      "notes": "Friendly match with North FC",
+      "coachId": 2
+    }
+  ]

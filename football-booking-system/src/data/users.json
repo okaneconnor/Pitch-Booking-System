@@ -1,0 +1,23 @@
+[
+    {
+      "id": 1,
+      "name": "John Smith",
+      "username": "coach1",
+      "password": "password123",
+      "role": "coach"
+    },
+    {
+      "id": 2,
+      "name": "Sarah Johnson",
+      "username": "coach2",
+      "password": "password123",
+      "role": "coach"
+    },
+    {
+      "id": 3,
+      "name": "Mike Brown",
+      "username": "player1",
+      "password": "password123",
+      "role": "player"
+    }
+  ]

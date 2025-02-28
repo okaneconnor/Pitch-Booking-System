@@ -1,0 +1,75 @@
+/* Additional styles specifically for App component */
+.app-title {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.loading {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 1.5rem;
+  color: #666;
+}
+
+/* Calendar styling */
+.booking-calendar {
+  margin-top: 20px;
+}
+
+.calendar-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.calendar-container {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.calendar-day {
+  background: white;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-height: 150px;
+}
+
+.calendar-date {
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
+}
+
+.calendar-date h4 {
+  margin: 0;
+  color: #333;
+}
+
+.calendar-date span {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.no-bookings {
+  color: #999;
+  text-align: center;
+  font-style: italic;
+  padding: 20px 0;
+}
+
+/* Form buttons */
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .calendar-container {
+    grid-template-columns: 1fr;
+  }
+}

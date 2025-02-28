@@ -1,0 +1,158 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f4f4f4;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  background-color: #1a73e8;
+  color: white;
+  padding: 15px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+}
+
+.btn {
+  display: inline-block;
+  background: #1a73e8;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.btn:hover {
+  background: #0b5cca;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid #1a73e8;
+  color: #1a73e8;
+}
+
+.form-control {
+  margin: 20px 0;
+}
+
+.form-control label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-control input, .form-control select, .form-control textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.booking-list {
+  list-style: none;
+}
+
+.booking-item {
+  background: white;
+  margin: 10px 0;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.calendar {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.calendar th, .calendar td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.calendar th {
+  background-color: #f8f9fa;
+}
+
+.calendar td.booked {
+  background-color: #ffcccb;
+}
+
+.calendar td.available {
+  background-color: #ceffce;
+}
+
+.auth-form {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.pitch-selector {
+  margin-bottom: 20px;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.success {
+  color: green;
+  text-align: center;
+  margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+  .header .container {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .nav-link {
+    margin: 10px 10px 0;
+  }
+}
