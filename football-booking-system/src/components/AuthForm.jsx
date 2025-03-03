@@ -82,12 +82,6 @@ function AuthForm({ onLogin }) {
         >
           {loading ? 'Logging in...' : 'Login'}
         </button>
-        
-        <div className="login-help">
-          <p>Demo accounts:</p>
-          <p>Coach: username: coach1, password: password123</p>
-          <p>Player: username: player1, password: password123</p>
-        </div>
       </form>
     </div>
   );

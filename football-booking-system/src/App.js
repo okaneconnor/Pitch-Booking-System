@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import BookingCalendar from './components/BookingCalendar';
 import BookingForm from './components/BookingForm';
@@ -15,6 +15,7 @@ function App() {
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
   
   useEffect(() => {
     // Load data from JSON files
@@ -24,7 +25,12 @@ function App() {
     // Check for saved login in localStorage
     const savedUser = localStorage.getItem('footballBookingUser');
     if (savedUser) {
-      setCurrentUser(JSON.parse(savedUser));
+      try {
+        setCurrentUser(JSON.parse(savedUser));
+      } catch (e) {
+        // Handle any JSON parsing errors
+        localStorage.removeItem('footballBookingUser');
+      }
     }
     setLoading(false);
   }, []);
@@ -75,7 +81,6 @@ function App() {
       <Header currentUser={currentUser} onLogout={handleLogout} />
       <div className="container">
         <Routes>
-          {/* Redirect to login if not authenticated */}
           <Route 
             path="/" 
             element={
@@ -85,7 +90,7 @@ function App() {
                   currentUser={currentUser}
                 />
               ) : (
-                <Navigate to="/login" replace />
+                <Navigate to="/login" state={{ from: location }} replace />
               )
             } 
           />
@@ -99,7 +104,7 @@ function App() {
                   existingBookings={bookings}
                 />
               ) : (
-                <Navigate to="/login" replace />
+                <Navigate to="/login" state={{ from: location }} replace />
               )
             } 
           />
@@ -115,7 +120,6 @@ function App() {
             } 
           />
 
-          {/* Catch all route - redirect to login if not logged in, otherwise to home */}
           <Route 
             path="*" 
             element={

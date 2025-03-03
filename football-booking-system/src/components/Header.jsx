@@ -1,7 +1,15 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Header({ currentUser, onLogout }) {
+  const navigate = useNavigate();
+  
+  const handleLogout = (e) => {
+    e.preventDefault();
+    onLogout();
+    navigate('/login');
+  };
+
   return (
     <header className="header">
       <div className="container">
@@ -19,9 +27,9 @@ function Header({ currentUser, onLogout }) {
               Welcome, {currentUser.name} ({currentUser.role})
             </span>
             
-            <Link to="/login" className="nav-link" onClick={onLogout}>
+            <a href="/" className="nav-link" onClick={handleLogout}>
               Logout
-            </Link>
+            </a>
           </nav>
         ) : (
           <nav>
