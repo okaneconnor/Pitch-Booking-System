@@ -14,6 +14,7 @@ function App() {
   const [bookings, setBookings] = useState([]);
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     // Load data from JSON files
@@ -25,6 +26,7 @@ function App() {
     if (savedUser) {
       setCurrentUser(JSON.parse(savedUser));
     }
+    setLoading(false);
   }, []);
   
   const handleLogin = (credentials) => {
@@ -62,19 +64,29 @@ function App() {
     // For this demo, we're just updating the state
     return true;
   };
+
+  // Show loading indicator while checking authentication
+  if (loading) {
+    return <div className="loading">Loading...</div>;
+  }
   
   return (
     <div>
       <Header currentUser={currentUser} onLogout={handleLogout} />
       <div className="container">
         <Routes>
+          {/* Redirect to login if not authenticated */}
           <Route 
             path="/" 
             element={
-              <BookingCalendar 
-                bookings={bookings} 
-                currentUser={currentUser}
-              />
+              currentUser ? (
+                <BookingCalendar 
+                  bookings={bookings} 
+                  currentUser={currentUser}
+                />
+              ) : (
+                <Navigate to="/login" replace />
+              )
             } 
           />
           
@@ -100,6 +112,14 @@ function App() {
               ) : (
                 <AuthForm onLogin={handleLogin} />
               )
+            } 
+          />
+
+          {/* Catch all route - redirect to login if not logged in, otherwise to home */}
+          <Route 
+            path="*" 
+            element={
+              currentUser ? <Navigate to="/" replace /> : <Navigate to="/login" replace />
             } 
           />
         </Routes>

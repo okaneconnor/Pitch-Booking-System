@@ -6,6 +6,7 @@ function AuthForm({ onLogin }) {
     password: ''
   });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,23 +19,33 @@ function AuthForm({ onLogin }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
     
     // Basic validation
     if (!formData.username || !formData.password) {
       setError('Username and password are required');
+      setLoading(false);
       return;
     }
     
-    const success = onLogin(formData);
-    
-    if (!success) {
-      setError('Invalid username or password');
-    }
+    // Add a small delay to simulate a server request
+    setTimeout(() => {
+      const success = onLogin(formData);
+      
+      if (!success) {
+        setError('Invalid username or password');
+      }
+      setLoading(false);
+    }, 500);
   };
 
   return (
     <div className="auth-form">
-      <h2>Login</h2>
+      <h2>Login to Football Pitch Booking</h2>
+      <p className="auth-description">
+        Please log in to view or manage pitch bookings
+      </p>
+      
       <form onSubmit={handleSubmit}>
         <div className="form-control">
           <label htmlFor="username">Username</label>
@@ -45,6 +56,7 @@ function AuthForm({ onLogin }) {
             value={formData.username}
             onChange={handleChange}
             placeholder="Enter your username"
+            disabled={loading}
           />
         </div>
         
@@ -57,12 +69,25 @@ function AuthForm({ onLogin }) {
             value={formData.password}
             onChange={handleChange}
             placeholder="Enter your password"
+            disabled={loading}
           />
         </div>
         
         {error && <div className="error">{error}</div>}
         
-        <button type="submit" className="btn">Login</button>
+        <button 
+          type="submit" 
+          className="btn" 
+          disabled={loading}
+        >
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+        
+        <div className="login-help">
+          <p>Demo accounts:</p>
+          <p>Coach: username: coach1, password: password123</p>
+          <p>Player: username: player1, password: password123</p>
+        </div>
       </form>
     </div>
   );
