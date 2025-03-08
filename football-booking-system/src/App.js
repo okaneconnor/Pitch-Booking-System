@@ -12,21 +12,33 @@ function App() {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
   
+  const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3001' 
+    : `https://${window.location.hostname}/api`;
+  
+  console.log('Using API URL:', API_URL);
+  
   useEffect(() => {
     // Check for saved login in localStorage
     const savedUser = localStorage.getItem('footballBookingUser');
     const token = localStorage.getItem('footballBookingToken');
     
+    console.log('Checking for saved user session');
+    
     if (savedUser && token) {
       try {
-        setCurrentUser(JSON.parse(savedUser));
+        const user = JSON.parse(savedUser);
+        console.log('Found saved user:', user.username);
+        setCurrentUser(user);
         // Fetch bookings with the token
         fetchBookings(token);
       } catch (e) {
-        // Handle any JSON parsing errors
+        console.error('Error parsing saved user:', e);
         localStorage.removeItem('footballBookingUser');
         localStorage.removeItem('footballBookingToken');
       }
+    } else {
+      console.log('No saved user session found');
     }
     setLoading(false);
   }, []);
@@ -34,7 +46,8 @@ function App() {
   // Fetch bookings from API
   const fetchBookings = async (token) => {
     try {
-      const response = await fetch('/api/bookings', {
+      console.log('Fetching bookings...');
+      const response = await fetch(`${API_URL}/api/bookings`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -42,9 +55,12 @@ function App() {
       
       if (response.ok) {
         const data = await response.json();
+        console.log('Bookings fetched successfully:', data.length);
         setBookings(data);
       } else {
-        console.error('Failed to fetch bookings');
+        console.error('Failed to fetch bookings, status:', response.status);
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
       }
     } catch (error) {
       console.error('Error fetching bookings:', error);
@@ -52,8 +68,9 @@ function App() {
   };
   
   const handleLogin = async (credentials) => {
+    console.log('Attempting login for:', credentials.username);
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch(`${API_URL}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,11 +78,15 @@ function App() {
         body: JSON.stringify(credentials),
       });
       
+      console.log('Login response status:', response.status);
+      
       if (!response.ok) {
+        console.error('Login failed, status:', response.status);
         return false;
       }
       
       const data = await response.json();
+      console.log('Login successful, user role:', data.user.role);
       
       // Store user data and token
       setCurrentUser(data.user);
@@ -83,6 +104,7 @@ function App() {
   };
   
   const handleLogout = () => {
+    console.log('Logging out user');
     setCurrentUser(null);
     setBookings([]);
     localStorage.removeItem('footballBookingUser');
@@ -93,11 +115,13 @@ function App() {
     const token = localStorage.getItem('footballBookingToken');
     
     if (!token) {
+      console.error('No token found, cannot add booking');
       return false;
     }
     
+    console.log('Adding new booking:', newBooking);
     try {
-      const response = await fetch('/api/bookings', {
+      const response = await fetch(`${API_URL}/api/bookings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,9 +138,13 @@ function App() {
       });
       
       if (!response.ok) {
+        console.error('Add booking failed, status:', response.status);
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
         return false;
       }
       
+      console.log('Booking added successfully');
       // Refresh bookings after adding a new one
       await fetchBookings(token);
       return true;
