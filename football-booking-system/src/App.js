@@ -6,69 +6,124 @@ import BookingForm from './components/BookingForm';
 import AuthForm from './components/AuthForm';
 import './App.css';
 
-// Import JSON data
-import bookingsData from './data/bookings.json';
-import usersData from './data/users.json';
-
 function App() {
   const [bookings, setBookings] = useState([]);
-  const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const location = useLocation();
   
   useEffect(() => {
-    // Load data from JSON files
-    setBookings(bookingsData);
-    setUsers(usersData);
-    
     // Check for saved login in localStorage
     const savedUser = localStorage.getItem('footballBookingUser');
-    if (savedUser) {
+    const token = localStorage.getItem('footballBookingToken');
+    
+    if (savedUser && token) {
       try {
         setCurrentUser(JSON.parse(savedUser));
+        // Fetch bookings with the token
+        fetchBookings(token);
       } catch (e) {
         // Handle any JSON parsing errors
         localStorage.removeItem('footballBookingUser');
+        localStorage.removeItem('footballBookingToken');
       }
     }
     setLoading(false);
   }, []);
   
-  const handleLogin = (credentials) => {
-    const user = users.find(
-      u => u.username === credentials.username && u.password === credentials.password
-    );
-    
-    if (user) {
-      // Remove password before storing in state/localStorage
-      const { password, ...userWithoutPassword } = user;
-      setCurrentUser(userWithoutPassword);
-      localStorage.setItem('footballBookingUser', JSON.stringify(userWithoutPassword));
-      return true;
+  // Fetch bookings from API
+  const fetchBookings = async (token) => {
+    try {
+      const response = await fetch('/api/bookings', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setBookings(data);
+      } else {
+        console.error('Failed to fetch bookings');
+      }
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
     }
-    
-    return false;
+  };
+  
+  const handleLogin = async (credentials) => {
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      });
+      
+      if (!response.ok) {
+        return false;
+      }
+      
+      const data = await response.json();
+      
+      // Store user data and token
+      setCurrentUser(data.user);
+      localStorage.setItem('footballBookingUser', JSON.stringify(data.user));
+      localStorage.setItem('footballBookingToken', data.token);
+      
+      // Fetch bookings after successful login
+      await fetchBookings(data.token);
+      
+      return true;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
+    }
   };
   
   const handleLogout = () => {
     setCurrentUser(null);
+    setBookings([]);
     localStorage.removeItem('footballBookingUser');
+    localStorage.removeItem('footballBookingToken');
   };
   
-  const handleAddBooking = (newBooking) => {
-    // In a real app, this would be an API call
-    const updatedBookings = [...bookings, { 
-      id: Date.now(), // Simple ID generation
-      ...newBooking,
-      coachId: currentUser?.id
-    }];
+  const handleAddBooking = async (newBooking) => {
+    const token = localStorage.getItem('footballBookingToken');
     
-    setBookings(updatedBookings);
+    if (!token) {
+      return false;
+    }
     
-    // In a real app, we would save to the server here
-    // For this demo, we're just updating the state
-    return true;
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          date: newBooking.date,
+          startTime: newBooking.startTime,
+          endTime: newBooking.endTime,
+          pitchId: newBooking.pitch === 'Pitch 1' ? 1 : 2,
+          sessionType: newBooking.sessionType,
+          notes: newBooking.notes
+        }),
+      });
+      
+      if (!response.ok) {
+        return false;
+      }
+      
+      // Refresh bookings after adding a new one
+      await fetchBookings(token);
+      return true;
+    } catch (error) {
+      console.error('Error adding booking:', error);
+      return false;
+    }
   };
 
   // Show loading indicator while checking authentication

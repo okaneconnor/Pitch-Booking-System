@@ -4,14 +4,23 @@ import { format } from 'date-fns';
 function Booking({ booking }) {
   const formattedDate = format(new Date(booking.date), 'MMMM d, yyyy');
   
+  // Handle database API format vs JSON format
+  const startTime = booking.start_time || booking.startTime;
+  const endTime = booking.end_time || booking.endTime;
+  const pitchName = booking.pitch_name || booking.pitch || `Pitch ${booking.pitch_id}`;
+  const sessionType = booking.session_type || booking.sessionType;
+  const notes = booking.notes;
+  const coachName = booking.coach_name || '';
+  
   return (
     <div className="booking-item">
       <h3>
-        {booking.startTime} to {booking.endTime}
+        {startTime} to {endTime}
       </h3>
-      <p><strong>Pitch:</strong> {booking.pitch}</p>
-      <p><strong>Session Type:</strong> {booking.sessionType}</p>
-      {booking.notes && <p><strong>Notes:</strong> {booking.notes}</p>}
+      <p><strong>Pitch:</strong> {pitchName}</p>
+      <p><strong>Session Type:</strong> {sessionType}</p>
+      {notes && <p><strong>Notes:</strong> {notes}</p>}
+      {coachName && <p><strong>Coach:</strong> {coachName}</p>}
     </div>
   );
 }

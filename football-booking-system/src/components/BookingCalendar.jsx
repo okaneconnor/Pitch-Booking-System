@@ -15,7 +15,10 @@ function BookingCalendar({ bookings, currentUser }) {
     const endOfWeek = addDays(startOfCurrentWeek, 6);
     
     const isInSelectedWeek = bookingDate >= startOfCurrentWeek && bookingDate <= endOfWeek;
-    const matchesPitch = selectedPitch === 'all' || booking.pitch === selectedPitch;
+    
+    // Handle the API format where pitch comes as pitch_name or pitch_id
+    const bookingPitch = booking.pitch_name || booking.pitch || `Pitch ${booking.pitch_id}`;
+    const matchesPitch = selectedPitch === 'all' || bookingPitch === selectedPitch;
     
     return isInSelectedWeek && matchesPitch;
   });

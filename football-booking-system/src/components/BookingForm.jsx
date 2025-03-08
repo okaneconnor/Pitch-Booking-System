@@ -45,12 +45,16 @@ function BookingForm({ onAddBooking, existingBookings }) {
     
     // Check for overlapping bookings
     const hasOverlap = existingBookings.some(booking => {
-      if (booking.date !== formData.date || booking.pitch !== formData.pitch) {
+      // Get pitch from either format
+      const bookingPitch = booking.pitch_name || booking.pitch || `Pitch ${booking.pitch_id}`;
+      const bookingDate = format(new Date(booking.date), 'yyyy-MM-dd');
+      const existingStart = booking.start_time || booking.startTime;
+      const existingEnd = booking.end_time || booking.endTime;
+      
+      if (bookingDate !== formData.date || bookingPitch !== formData.pitch) {
         return false;
       }
       
-      const existingStart = booking.startTime;
-      const existingEnd = booking.endTime;
       const newStart = formData.startTime;
       const newEnd = formData.endTime;
       
@@ -68,7 +72,7 @@ function BookingForm({ onAddBooking, existingBookings }) {
     return '';
   };
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Reset messages
@@ -83,7 +87,7 @@ function BookingForm({ onAddBooking, existingBookings }) {
     }
     
     // Add the new booking
-    const success = onAddBooking(formData);
+    const success = await onAddBooking(formData);
     
     if (success) {
       setSuccess('Booking added successfully');
