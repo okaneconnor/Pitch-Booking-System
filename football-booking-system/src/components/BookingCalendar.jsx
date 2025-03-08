@@ -1,63 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { format, startOfWeek, addDays, addWeeks, subWeeks } from 'date-fns';
 import PitchSelector from './PitchSelector';
 import Booking from './Booking';
 
-function BookingCalendar({ currentUser }) {
+function BookingCalendar({ bookings, currentUser }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedPitch, setSelectedPitch] = useState('all');
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  // Fetch bookings from API
-  useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem('footballBookingToken');
-        
-        if (!token) {
-          setError('Authentication token not found');
-          setLoading(false);
-          return;
-        }
-        
-        const response = await fetch('/api/bookings', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch bookings');
-        }
-        
-        const bookingsData = await response.json();
-        // Transform API response to match expected format if needed
-        const formattedBookings = bookingsData.map(booking => ({
-          id: booking.id,
-          date: booking.date,
-          startTime: booking.start_time,
-          endTime: booking.end_time,
-          pitch: booking.pitch_name,
-          sessionType: booking.session_type,
-          notes: booking.notes,
-          coachId: booking.coach_id
-        }));
-        
-        setBookings(formattedBookings);
-        setError(null);
-      } catch (error) {
-        console.error('Error fetching bookings:', error);
-        setError('Failed to load bookings. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchBookings();
-  }, [currentDate]); // Re-fetch when week changes
   
   const startOfCurrentWeek = startOfWeek(currentDate, { weekStartsOn: 1 });
   
@@ -103,14 +51,6 @@ function BookingCalendar({ currentUser }) {
   const handlePitchChange = (pitch) => {
     setSelectedPitch(pitch);
   };
-  
-  if (loading) {
-    return <div className="loading">Loading bookings...</div>;
-  }
-  
-  if (error) {
-    return <div className="error">{error}</div>;
-  }
   
   return (
     <div className="booking-calendar">
