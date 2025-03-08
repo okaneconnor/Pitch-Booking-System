@@ -35,25 +35,32 @@ function App() {
     setLoading(false);
   }, []);
   
-  const handleLogin = (credentials) => {
-    const user = users.find(
-      u => u.username === credentials.username && u.password === credentials.password
-    );
-    
-    if (user) {
-      // Remove password before storing in state/localStorage
-      const { password, ...userWithoutPassword } = user;
-      setCurrentUser(userWithoutPassword);
-      localStorage.setItem('footballBookingUser', JSON.stringify(userWithoutPassword));
+  const handleLogin = async (credentials) => {
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      });
+      
+      if (!response.ok) {
+        return false;
+      }
+      
+      const data = await response.json();
+      
+      // Store user data and token
+      setCurrentUser(data.user);
+      localStorage.setItem('footballBookingUser', JSON.stringify(data.user));
+      localStorage.setItem('footballBookingToken', data.token);
+      
       return true;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
     }
-    
-    return false;
-  };
-  
-  const handleLogout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('footballBookingUser');
   };
   
   const handleAddBooking = (newBooking) => {
