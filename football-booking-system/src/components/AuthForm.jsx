@@ -28,15 +28,18 @@ function AuthForm({ onLogin }) {
       return;
     }
     
-    // Add a small delay to simulate a server request
-    setTimeout(() => {
-      const success = onLogin(formData);
-      
-      if (!success) {
-        setError('Invalid username or password');
-      }
-      setLoading(false);
-    }, 500);
+    onLogin(formData)
+      .then(success => {
+        if (!success) {
+          setError('Invalid username or password');
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Login error:', err);
+        setError('An error occurred during login');
+        setLoading(false);
+      });
   };
 
   return (
