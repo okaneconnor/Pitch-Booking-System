@@ -12,9 +12,10 @@ function App() {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
   
+  // Simplified API URL configuration
   const API_URL = window.location.hostname === 'localhost' 
-    ? 'http://localhost:3001' 
-    : `https://${window.location.hostname}/api`;
+    ? 'http://localhost:3001/api' 
+    : `/api`;
   
   console.log('Using API URL:', API_URL);
   
@@ -47,7 +48,7 @@ function App() {
   const fetchBookings = async (token) => {
     try {
       console.log('Fetching bookings...');
-      const response = await fetch(`${API_URL}/api/bookings`, {
+      const response = await fetch(`${API_URL}/bookings`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -69,8 +70,10 @@ function App() {
   
   const handleLogin = async (credentials) => {
     console.log('Attempting login for:', credentials.username);
+    console.log('Login URL:', `${API_URL}/login`);
+    
     try {
-      const response = await fetch(`${API_URL}/api/login`, {
+      const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -82,6 +85,8 @@ function App() {
       
       if (!response.ok) {
         console.error('Login failed, status:', response.status);
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
         return false;
       }
       
@@ -121,7 +126,7 @@ function App() {
     
     console.log('Adding new booking:', newBooking);
     try {
-      const response = await fetch(`${API_URL}/api/bookings`, {
+      const response = await fetch(`${API_URL}/bookings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
